@@ -9,4 +9,4 @@ package com.example.river.todolist
 //    var done: Boolean? = false
 //}
 
-class ToDoItem(var uniqueId: String? = null, var itemText: String? = null, var done: Boolean = false)
+class ToDoItem(var uniqueId: String, var itemText: String, var done: Boolean)

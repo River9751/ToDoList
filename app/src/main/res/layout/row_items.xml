@@ -31,4 +31,5 @@
         android:background="@android:color/transparent"
         android:gravity="end"
         app:srcCompat="@android:drawable/btn_dialog" />
+
 </RelativeLayout>

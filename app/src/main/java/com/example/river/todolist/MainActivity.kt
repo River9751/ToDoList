@@ -5,13 +5,14 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.EditText
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     //SharedPreferences
     lateinit var toDoItemPreferences: ToDoItemPreferences
-    //資料來源
+    //DataSource
     lateinit var toDoItemList: MutableList<ToDoItem>
     //RecyclerView Adapter
     lateinit var toDoAdapter: ToDoItemAdapter
@@ -23,32 +24,84 @@ class MainActivity : AppCompatActivity() {
 
         //新增項目事件
         fab_01.setOnClickListener {
-            addNewItemDialog()
+            itemDialog(toDoItem = ToDoItem("", "", false))
         }
 
         //給值
         toDoItemPreferences = ToDoItemPreferences(this)
-        toDoItemList = toDoItemPreferences.Str2ToDoItem()
-        toDoAdapter = ToDoItemAdapter(this, toDoItemList, clickListener = {
-            toDoItemPreferences.removeData(it)
-            toDoAdapter.refreshView(toDoItemPreferences.Str2ToDoItem())
-        })
+        toDoItemList = toDoItemPreferences.getDatas()
+        toDoAdapter = ToDoItemAdapter(
+                this,
+                toDoItemList,
+                ::ItemClicked) //把按下後的判斷方法當作參數傳入
+
 
         rv_01.layoutManager = LinearLayoutManager(this)
         rv_01.adapter = toDoAdapter
     }
 
-    private fun addNewItemDialog() {
+    //RecyclerView中按下Item要做的事情
+    fun ItemClicked(id: Int, toDoItem: ToDoItem): Unit {
+        when (id) {
+        //刪除
+            R.id.iv_cross -> {
+                if (toDoItemPreferences.removeData(toDoItem.uniqueId)) {
+                    toDoAdapter.deleteItem(toDoItem)
+                }
+            }
+        //修改
+            R.id.tv_item_text -> {
+                itemDialog(toDoItem)
+            }
+        //勾選
+            R.id.cb_item_is_done -> {
+                if (toDoItemPreferences.updateData(toDoItem)) {
+                    //這邊有呼叫 notifyDataSetChanged() 會報錯。
+                    toDoAdapter.updateItem(toDoItem)
+                    //toDoAdapter.updateItemFromCheck(toDoItem)
+                }
+            }
+            else -> {
+                Toast.makeText(this, "Else Clicked", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    //新增項目Dialog
+    private fun itemDialog(toDoItem: ToDoItem): String {
+        //uniqueId ="" 代表要新增
         val alert = AlertDialog.Builder(this)
         val itemEditText = EditText(this)
+
+        var strMessage = "Add New Item"
+
+        if (toDoItem.uniqueId != "") {
+            //修改
+            strMessage = "Modify Item"
+            itemEditText.setText(toDoItem.itemText)
+            alert.setPositiveButton("Update") { dialog, positiveButton ->
+                toDoItem.itemText = itemEditText.text.toString()
+                if (toDoItemPreferences.updateData(toDoItem)) {
+                    toDoAdapter.updateItem(toDoItem)
+                }
+            }
+        } else {
+            //新增
+            alert.setPositiveButton("Add") { dialog, positiveButton ->
+                val uniqueId = toDoItemPreferences.addData(itemEditText.text.toString())
+                if (uniqueId != null) {
+                    toDoAdapter.addNewItem(toDoItem = ToDoItem(uniqueId, itemEditText.text.toString(), false))
+                }
+            }
+        }
         alert
-                .setMessage("Add New Item")
+                .setMessage(strMessage)
                 .setTitle("Enter To Do Item Text")
                 .setView(itemEditText)
-                .setPositiveButton("Submit") { dialog, positiveButton ->
-                    toDoItemPreferences.setData(null, itemEditText.text.toString())
-                    toDoAdapter.refreshView(toDoItemPreferences.Str2ToDoItem())
-                }
-        alert.show()
+                .show()
+
+        return itemEditText.text.toString()
     }
+
+
 }

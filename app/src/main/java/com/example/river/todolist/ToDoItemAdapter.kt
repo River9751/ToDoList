@@ -2,32 +2,28 @@ package com.example.river.todolist
 
 import android.content.Context
 import android.graphics.Paint
+import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.TextView
 import kotlinx.android.synthetic.main.row_items.view.*
 
 
+//將資料轉換為介面
 class ToDoItemAdapter(
         context: Context,
         toDoItemList: MutableList<ToDoItem>,
-        clickListener: (id: Int, uniId: String, itemText: String, checked: Boolean, tv_itemText: TextView?) -> Unit)
+        clickListener: (id: Int, toDoItem: ToDoItem) -> Unit)
     : RecyclerView.Adapter<ToDoItemAdapter.ViewHolder>() {
 
     private val ctx = context
     private var list = toDoItemList
     private val itemClickListener = clickListener
-
-    lateinit var myClickListener: IClickListener
-
-//    //如果沒有主要建構子，次要建構子需要加上 super 關鍵字
-//    constructor(toDoItemList: MutableList<ToDoItem>) : super() {
-//        list = toDoItemList
-//        var action: delAction
-//
-//    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -39,70 +35,59 @@ class ToDoItemAdapter(
 
     override fun getItemCount(): Int = list.size
 
-    //*每次呼叫 notifyDataSetChanged 會觸發 onBindViewHolder
+    //*每次刷新介面 會觸發 onBindViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         //更改 Item 的屬性
         holder.cbDone.isChecked = list[position].done
-        holder.tvText.text = list[position].itemText.toString()
-        holder.uniqueId = list[position].uniqueId.toString()
-
-        val checked = list[position].done
-        val uniqueId = holder.uniqueId
-        val itemText = holder.tvText.text.toString()
-
+        holder.tvText.text = list[position].itemText
+        holder.uniqueId = list[position].uniqueId
 
         //控制項加入事件
         holder.delBtn.setOnClickListener {
-            itemClickListener.invoke(holder.delBtn.id, uniqueId, "", checked, null)
+            itemClickListener.invoke(holder.delBtn.id, list[holder.adapterPosition])
         }
         holder.tvText.setOnClickListener {
-            itemClickListener.invoke(holder.tvText.id, uniqueId, itemText, checked, null)
+            itemClickListener.invoke(holder.tvText.id, list[holder.adapterPosition])
         }
         holder.cbDone.setOnCheckedChangeListener { buttonView, isChecked ->
-            itemClickListener.invoke(holder.cbDone.id, uniqueId, itemText, isChecked, holder.tvText)
+            list[holder.adapterPosition].done = isChecked
+            itemClickListener.invoke(holder.cbDone.id, list[holder.adapterPosition])
         }
 
         //已勾選項目劃上刪除線
-        if (checked) {
-            holder.tvText.setTextColor(android.graphics.Color.GRAY)// = Color.parseColor("#DDDDDD")
-            //textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG)
-            holder.tvText.paint.flags = Paint.STRIKE_THRU_TEXT_FLAG
-        } else {
-            holder.tvText.setTextColor(android.graphics.Color.BLACK)// = Color.parseColor("#DDDDDD")
-            //textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG)
-            holder.tvText.paint.flags = Paint.ANTI_ALIAS_FLAG
+        Helper.doStrike(list[position].done, holder.tvText)
+    }
+
+    class ViewHolder : RecyclerView.ViewHolder {
+        val cbDone: CheckBox = itemView.cb_item_is_done
+        val tvText: TextView = itemView.tv_item_text
+        val delBtn: ImageButton = itemView.iv_cross
+        var uniqueId: String = ""
+
+        constructor(v: View) : super(v) {
+            cbDone.setOnCheckedChangeListener { compoundButton, b ->
+                Helper.doStrike(b, tvText)
+            }
         }
     }
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val cbDone = v.cb_item_is_done
-        val tvText = v.tv_item_text
-        val delBtn = v.iv_cross
-        var uniqueId: String = ""
-    }
-
-
-    fun addItem(toDoItem: ToDoItem) {
+    fun addNewItem(toDoItem: ToDoItem) {
         this.list.add(toDoItem)
-        this.notifyDataSetChanged()
-    }
-
-    //更新畫面
-    fun refreshView(newList: MutableList<ToDoItem>) {
-        this.list = newList
-        this.notifyDataSetChanged()
-    }
-
-    interface IClickListener {
-        fun ClickListener(pos: Int)
+        notifyItemInserted(list.size - 1)
     }
 
 
-    var ccc: IClickListener? = null
-
-    fun OuterCall(aaa: IClickListener) {
-        ccc = aaa
+    fun deleteItem(toDoItem: ToDoItem) {
+        val i = list.indexOf(toDoItem)
+        this.list.remove(toDoItem)
+        notifyItemRemoved(i)
     }
 
-
+    fun updateItem(toDoItem: ToDoItem) {
+        Handler().post {
+            list.first { it.uniqueId == toDoItem.uniqueId }.itemText = toDoItem.itemText
+            notifyItemChanged(list.indexOf(toDoItem))
+        }
+    }
 }
