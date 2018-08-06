@@ -29,18 +29,6 @@ class MainActivity : AppCompatActivity() {
 
         //新增項目事件
         fab_01.setOnClickListener {
-            //            this.deleteDatabase("ToDoList.db")
-//            var aa: SQLiteDBManager = SQLiteDBManager(this)
-//            aa.dropTable()
-//            var bb: ContentValues = ContentValues()
-//            bb.put("itemText", "888")
-//            bb.put("done", 0)
-//            aa.insert(bb)
-//            Toast.makeText(this, aa.queryAll().count.toString(), Toast.LENGTH_SHORT).show()
-//            var aaaa = aa.queryAll()
-//            var p = 0;
-//            Toast.makeText(this, aa.queryAll().toString(), Toast.LENGTH_SHORT).show()
-
             itemDialog(toDoItem = ToDoItem("", "", false))
         }
 

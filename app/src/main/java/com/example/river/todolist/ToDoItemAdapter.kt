@@ -53,9 +53,7 @@ class ToDoItemAdapter(
         holder.tvText.text = list[position].itemText
         holder.uniqueId = list[position].uniqueId
 
-
-//        var toDoItem:ToDoItem = ToDoItem()
-        var flag = 0
+        var flag = 0 //避免重複點擊刪除按鈕時，重複觸發事件
         //控制項加入事件
         holder.delBtn.setOnClickListener {
             //println(position)

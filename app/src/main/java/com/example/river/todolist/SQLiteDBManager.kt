@@ -17,24 +17,24 @@ class SQLiteDBManager : IDataHandler {
         private const val TABLE_NAME = "ToDoItemList"
 
         // 表格欄位名稱
-        private const val UNIQUEID = "uniqueId"
+        private const val UNIQUE_ID = "uniqueId"
         private const val ITEM_TEXT = "itemText"
         private const val DONE = "done"
 
         private const val CREATE_TABLE_SQL = "CREATE TABLE " + TABLE_NAME + " (" +
-                UNIQUEID + " TEXT NOT NULL, " +
+                UNIQUE_ID + " TEXT NOT NULL, " +
                 ITEM_TEXT + " TEXT NOT NULL, " +
                 DONE + " INTEGER NOT NULL " + ")"
     }
 
     constructor(context: Context) {
-        var dbHelper = MyDBHelper(context, DB_NAME, TABLE_NAME, version, CREATE_TABLE_SQL)
+        val dbHelper = MyDBHelper(context, DB_NAME, TABLE_NAME, version, CREATE_TABLE_SQL)
         db = dbHelper.writableDatabase
     }
 
     override fun insert(itemText: String): String? {
         val uniqueId: String = UUID.randomUUID().toString()
-        var values = ContentValues()
+        val values = ContentValues()
         values.put("uniqueId", uniqueId)
         values.put("itemText", itemText)
         values.put("done", 0)
@@ -49,9 +49,9 @@ class SQLiteDBManager : IDataHandler {
 
     override fun update(toDoItem: ToDoItem): Boolean {
         val uniqueId: String = toDoItem.uniqueId
-        var itemText: String = toDoItem.itemText
-        var done: Int = if (toDoItem.done) 1 else 0
-        var values = ContentValues()
+        val itemText: String = toDoItem.itemText
+        val done: Int = if (toDoItem.done) 1 else 0
+        val values = ContentValues()
         values.put("uniqueId", uniqueId)
         values.put("itemText", itemText)
         values.put("done", done)
@@ -74,13 +74,13 @@ class SQLiteDBManager : IDataHandler {
     }
 
     override fun getAll(): MutableList<ToDoItem> {
-        var cursor = queryAll()
-        var list = ArrayList<ToDoItem>()
+        val cursor = queryAll()
+        val list = ArrayList<ToDoItem>()
         if (cursor.moveToFirst()) {
             do {
                 val uniqueId = cursor.getString(cursor.getColumnIndex("uniqueId"))
                 val itemText = cursor.getString(cursor.getColumnIndex("itemText"))
-                val done:Boolean = cursor.getInt(cursor.getColumnIndex("done")) == 1
+                val done: Boolean = cursor.getInt(cursor.getColumnIndex("done")) == 1
 
                 list.add(ToDoItem(uniqueId, itemText, done))
             } while (cursor.moveToNext())
@@ -94,7 +94,7 @@ class SQLiteDBManager : IDataHandler {
     }
 
 
-    fun dropTable() {
+    private fun dropTable() {
         db.execSQL("DROP TABLE ToDoItemList")
     }
 }

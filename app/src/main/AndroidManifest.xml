@@ -3,6 +3,7 @@
     package="com.example.river.todolist">
 
     <application
+        android:fullBackupOnly="false"
         android:name=".MyApplication"
         android:fullBackupContent="false"
         android:allowBackup="true"
