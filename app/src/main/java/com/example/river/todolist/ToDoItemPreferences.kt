@@ -5,6 +5,25 @@ import android.content.SharedPreferences
 import java.util.*
 
 class ToDoItemPreferences : IDataHandler {
+    override lateinit var deleteListener: (toDoItem: ToDoItem) -> Unit
+
+    override lateinit var updateListener: (toDoItem: ToDoItem) -> Unit
+
+    override lateinit var getAllListener: (list: MutableList<ToDoItem>) -> Unit
+
+    override lateinit var insertListener: (uniqueId: String, itemText: String) -> Unit
+
+    override fun initListener(
+            all: (list: MutableList<ToDoItem>) -> Unit,
+            insert: (uniqueId: String, itemText: String) -> Unit,
+            update: (toDoItem: ToDoItem) -> Unit,
+            delete: (toDoItem: ToDoItem) -> Unit
+    ) {
+        getAllListener = all
+        insertListener = insert
+        updateListener = update
+        deleteListener = delete
+    }
 
     private val preferencesName: String = "ToDoItemPreferences"
     private val myPreferences: SharedPreferences
@@ -15,47 +34,53 @@ class ToDoItemPreferences : IDataHandler {
         myPreferences = context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
     }
 
-
-    override fun insert(itemText: String): String? {
+    override fun insert(itemText: String) {
         val uniqueId: String = UUID.randomUUID().toString()
         val editor = myPreferences.edit()
-        return try {
+
+        var result = try {
             editor.putString(uniqueId, "$itemText, false")
             editor.apply()
-            uniqueId
-        } catch (e: Exception) {
-            null
+            true
+        } catch (ex: Exception) {
+            false
         }
+
+        if (result) insertListener.invoke(uniqueId, itemText)
     }
 
-    override fun update(toDoItem: ToDoItem): Boolean {
-        val id: String = toDoItem.uniqueId
-        val text: String = toDoItem.itemText
-        val checked: Boolean = toDoItem.done
+    override fun update(toDoItem: ToDoItem) {
+        val id: String = toDoItem.uniqueId!!
+        val text: String = toDoItem.itemText!!
+        val checked: Boolean = toDoItem.done!!
 
         val editor = myPreferences.edit()
 
-        return try {
+        val result = try {
             editor.putString(id, "$text,$checked")
             editor.apply()
             true
         } catch (e: Exception) {
             false
         }
+
+        if (result) updateListener.invoke(toDoItem)
     }
 
-    override fun delete(uniqueId: String): Boolean {
+    override fun delete(toDoItem: ToDoItem) {
         val editor = myPreferences.edit()
-        return try {
-            editor.remove(uniqueId)
+        var result = try {
+            editor.remove(toDoItem.uniqueId)
             editor.apply()
             true
         } catch (e: Exception) {
             false
         }
+
+        if (result) deleteListener.invoke(toDoItem)
     }
 
-    override fun getAll(): MutableList<ToDoItem> {
+    override fun getAll() {
         var list: MutableList<ToDoItem> = mutableListOf()
         myPreferences.all.keys.forEach {
             val text: String = myPreferences.getString(it, "default")
@@ -64,6 +89,8 @@ class ToDoItemPreferences : IDataHandler {
             val checked: Boolean = strList[1] == "true"
             list.add(ToDoItem(it, itemText, checked))
         }
-        return list
+        //return list
+
+        getAllListener.invoke(list)
     }
 }

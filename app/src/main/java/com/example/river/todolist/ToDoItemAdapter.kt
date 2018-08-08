@@ -49,9 +49,9 @@ class ToDoItemAdapter(
     //*每次刷新介面 會觸發 onBindViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //更改 Item 的屬性
-        holder.cbDone.isChecked = list[position].done
+        holder.cbDone.isChecked = list[position].done!!
         holder.tvText.text = list[position].itemText
-        holder.uniqueId = list[position].uniqueId
+        holder.uniqueId = list[position].uniqueId!!
 
         var flag = 0 //避免重複點擊刪除按鈕時，重複觸發事件
         //控制項加入事件
@@ -72,7 +72,7 @@ class ToDoItemAdapter(
         }
 
         //已勾選項目劃上刪除線
-        doStrike(list[position].done, holder.tvText)
+        doStrike(list[position].done!!, holder.tvText)
     }
 
     class ViewHolder : RecyclerView.ViewHolder {
@@ -80,7 +80,6 @@ class ToDoItemAdapter(
         val tvText: TextView = itemView.tv_item_text
         val delBtn: ImageButton = itemView.iv_cross
         var uniqueId: String = ""
-
 
         constructor(v: View) : super(v) {
             cbDone.setOnCheckedChangeListener { compoundButton, b ->
@@ -98,7 +97,6 @@ class ToDoItemAdapter(
             val i = list.indexOf(toDoItem)
             this.list.remove(toDoItem)
             notifyItemRemoved(i)
-
     }
 
     fun updateItem(toDoItem: ToDoItem) {
@@ -106,6 +104,11 @@ class ToDoItemAdapter(
             list.first { it.uniqueId == toDoItem.uniqueId }.itemText = toDoItem.itemText
             notifyItemChanged(list.indexOf(toDoItem))
         }
+    }
+
+    fun getAllItems(list: MutableList<ToDoItem>){
+        this.list = list
+        notifyDataSetChanged()
     }
 }
 

@@ -6,8 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import java.util.*
 
-class SQLiteDBManager : IDataHandler {
-
+class SQLiteDBManager  {
+/*
     private var db: SQLiteDatabase
     private var version = 1
 
@@ -48,9 +48,9 @@ class SQLiteDBManager : IDataHandler {
     }
 
     override fun update(toDoItem: ToDoItem): Boolean {
-        val uniqueId: String = toDoItem.uniqueId
-        val itemText: String = toDoItem.itemText
-        val done: Int = if (toDoItem.done) 1 else 0
+        val uniqueId: String = toDoItem.uniqueId!!
+        val itemText: String = toDoItem.itemText!!
+        val done: Int = if (toDoItem.done!!) 1 else 0
         val values = ContentValues()
         values.put("uniqueId", uniqueId)
         values.put("itemText", itemText)
@@ -97,4 +97,5 @@ class SQLiteDBManager : IDataHandler {
     private fun dropTable() {
         db.execSQL("DROP TABLE ToDoItemList")
     }
+    */
 }

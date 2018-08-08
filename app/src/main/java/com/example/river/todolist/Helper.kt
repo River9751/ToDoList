@@ -44,6 +44,7 @@ class Singleton2 private constructor() {
 //}
 
 class Helper(ctx: Context) {
+    /*
     //SharedPreferences
      var toDoItemPreferences: ToDoItemPreferences
      var mSQLiteManager: SQLiteDBManager
@@ -67,7 +68,8 @@ class Helper(ctx: Context) {
         when (dataSource) {
             Helper.dataSource.SharedPreferences -> {
                 toDoItemPreferences = ToDoItemPreferences(ctx)
-                return toDoItemPreferences.getAll()
+                //return toDoItemPreferences.getAll()
+            return  arrayListOf()
             }
             Helper.dataSource.SQLite -> {
                 mSQLiteManager = SQLiteDBManager(ctx)
@@ -81,4 +83,5 @@ class Helper(ctx: Context) {
         SharedPreferences,
         SQLite
     }
+    */
 }
