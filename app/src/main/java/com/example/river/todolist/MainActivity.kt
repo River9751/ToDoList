@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.security.auth.callback.Callback
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,71 +35,53 @@ class MainActivity : AppCompatActivity() {
 
         //給值
         //dataHandler = ToDoItemPreferences(this)
-
         dataHandler = FirebaseHelper()
-        //dataHandler.initData(::showListDataOnView)
-        dataHandler.initListener(
-                ::refreshAllData,
-                ::refreshInsertData,
-                ::refreshUpdateData,
-                ::refreshDeleteData)
-
         //dataHandler = SQLiteDBManager(this)
+
         //sqLiteDBManager = SQLiteDBManager(this)
         //toDoItemPreferences = ToDoItemPreferences(this)
         //toDoItemList = toDoItemPreferences.getDatas()
         //toDoItemList = Helper.getDataList(this, Helper.dataSource.SharedPreferences)
         //toDoItemList = dataHandler.getAll()
 
-        toDoAdapter = ToDoItemAdapter(this, toDoItemList, ::ItemClicked) //把按下後的判斷方法當作參數傳入
 
-        dataHandler.getAll()
+        toDoAdapter = ToDoItemAdapter(this, toDoItemList, ::itemClicked) //把按下後的判斷方法當作參數傳入
+
+
+        dataHandler.load(object : Callback, IDataHandler.Callback {
+            override fun onSuccess(obj: Any?) {
+                toDoAdapter.getAllItems(obj as MutableList<ToDoItem>)
+            }
+
+            override fun onError(errorMsg: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
 
         rv_01.layoutManager = LinearLayoutManager(this)
         rv_01.adapter = toDoAdapter
     }
 
-    fun refreshAllData(list: MutableList<ToDoItem>) {
-        //toDoItemList = list
-        toDoAdapter.getAllItems(list)
-    }
-
-    fun refreshInsertData(uniqueId: String, itemText: String) {
-        toDoAdapter.addNewItem(toDoItem = ToDoItem(uniqueId, itemText, false))
-    }
-
-    fun refreshUpdateData(toDoItem: ToDoItem) {
-        toDoAdapter.updateItem(toDoItem)
-    }
-
-    fun refreshDeleteData(toDoItem: ToDoItem) {
-        toDoAdapter.deleteItem(toDoItem)
-    }
-
-    //RecyclerView中按下Item要做的事情
-    fun ItemClicked(id: Int, toDoItem: ToDoItem): Unit {
+    /**
+     * 按下介面控制項的事件
+     */
+    private fun itemClicked(id: Int, toDoItem: ToDoItem): Unit {
         when (id) {
             //刪除
-            R.id.iv_cross -> {
-                dataHandler.delete(toDoItem)
-            }
+            R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> {
-                itemDialog(toDoItem)
-            }
+            R.id.tv_item_text -> itemDialog(toDoItem)
             //勾選
-            R.id.cb_item_is_done -> {
-                dataHandler.update(toDoItem)
-            }
-            else -> {
-                Toast.makeText(this, "Else Clicked", Toast.LENGTH_SHORT).show()
-            }
+            R.id.cb_item_is_done -> updateData(toDoItem)
+            //
+            else -> Toast.makeText(this, "Else Clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
-    //新增或修改項目Dialog
+    /**
+     * 新增和修改 Dialog，uniqueId = "" 代表新增項目
+     */
     private fun itemDialog(toDoItem: ToDoItem) {
-        //uniqueId ="" 代表要新增
         val alert = AlertDialog.Builder(this)
         val itemEditText = EditText(this)
 
@@ -109,12 +93,12 @@ class MainActivity : AppCompatActivity() {
             itemEditText.setText(toDoItem.itemText)
             alert.setPositiveButton("Update") { dialog, positiveButton ->
                 toDoItem.itemText = itemEditText.text.toString()
-                dataHandler.update(toDoItem)
+                updateData(toDoItem)
             }
         } else {
             //新增
             alert.setPositiveButton("Add") { dialog, positiveButton ->
-                dataHandler.insert(itemEditText.text.toString())
+                insertData(itemEditText.text.toString())
             }
         }
         alert
@@ -123,4 +107,45 @@ class MainActivity : AppCompatActivity() {
                 .setView(itemEditText)
                 .show()
     }
+
+    private fun insertData(itemText: String) {
+        dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
+            override fun onSuccess(obj: Any?) {
+                println("***AddNewItemToRecyclerView***")
+                toDoAdapter.addNewItem(obj as ToDoItem)
+            }
+
+            override fun onError(errorMsg: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+    }
+
+    private fun updateData(toDoItem: ToDoItem) {
+        dataHandler.update(toDoItem, object : Callback, IDataHandler.Callback {
+            override fun onSuccess(obj: Any?) {
+                var item = obj as ToDoItem
+
+                toDoAdapter.updateItem(obj as ToDoItem)
+            }
+
+            override fun onError(errorMsg: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+    }
+
+    private fun deleteData(uniqueId: String) {
+        dataHandler.delete(uniqueId, object : Callback, IDataHandler.Callback {
+            override fun onSuccess(obj: Any?) {
+                toDoAdapter.deleteItem(obj as String)
+            }
+
+            override fun onError(errorMsg: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+    }
+
+
 }

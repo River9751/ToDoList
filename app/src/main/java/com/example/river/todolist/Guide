@@ -1,0 +1,55 @@
+interface Helper{
+
+  //  func requestData(callback:Callback)
+
+    func load(cb:Callback)
+    func insert(cb:Callback)
+    func remove(cb:Callback)
+    func update(cb:Callback)
+
+    interface Callback{
+        fun onSuccess(items:List<TodoItem>)
+        fun onError(errorCode:Int)
+    }
+}
+
+class TodoItem{}
+
+MainActivity
+
+val hepler:Helper = FirebaseHelper()
+
+...
+helper.load(object:Callback{
+     fun onSuccess(items:List<TodoItem>){
+        listAdapter.addAll(items)
+        listAdapter.notifyDataSetChanged()
+     }
+
+     fun onError(err:Int){
+        Toast(err)
+     }
+}
+...
+
+
+class FirebaseHelper:Helper{
+    fun load(cb:Callbac){
+        fire.send(lister(vales){
+            cb.onSuccess(value)
+        }
+    }
+    ...
+}
+
+class SharePreferencedHelper{
+    fun load(cb:Callbac){
+        val data = sp.get(key)
+        if(validate (data)){
+            cb.onSuccess(data)
+        }else{
+            cb.onError()
+        }
+    }
+    ...
+}

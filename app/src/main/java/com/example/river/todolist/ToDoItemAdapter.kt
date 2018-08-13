@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.ImageButton
 import android.widget.TextView
 import kotlinx.android.synthetic.main.row_items.view.*
@@ -46,7 +47,6 @@ class ToDoItemAdapter(
 
     override fun getItemCount(): Int = list.size
 
-    //*每次刷新介面 會觸發 onBindViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //更改 Item 的屬性
         holder.cbDone.isChecked = list[position].done!!
@@ -56,7 +56,6 @@ class ToDoItemAdapter(
         var flag = 0 //避免重複點擊刪除按鈕時，重複觸發事件
         //控制項加入事件
         holder.delBtn.setOnClickListener {
-            //println(position)
             if (flag == 0) {
                 itemClickListener.invoke(holder.delBtn.id, list[holder.adapterPosition])
                 flag = 1
@@ -82,7 +81,7 @@ class ToDoItemAdapter(
         var uniqueId: String = ""
 
         constructor(v: View) : super(v) {
-            cbDone.setOnCheckedChangeListener { compoundButton, b ->
+            cbDone.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
                 doStrike(b, tvText)
             }
         }
@@ -93,20 +92,30 @@ class ToDoItemAdapter(
         notifyItemInserted(list.size - 1)
     }
 
-    fun deleteItem(toDoItem: ToDoItem) {
-            val i = list.indexOf(toDoItem)
-            this.list.remove(toDoItem)
-            notifyItemRemoved(i)
+    fun deleteItem(uniqueId: String) {
+        val toDoItem = list.find { it -> it.uniqueId == uniqueId }
+        val i = list.indexOf(toDoItem)
+        this.list.remove(toDoItem)
+        notifyItemRemoved(i)
+
+//        val item = list.find { it -> it.uniqueId == uniqueId }
+//        val i = list.indexOf(item)
+//        list.remove(item)
+//        notifyItemRemoved(i)
     }
 
     fun updateItem(toDoItem: ToDoItem) {
         Handler().post {
             list.first { it.uniqueId == toDoItem.uniqueId }.itemText = toDoItem.itemText
-            notifyItemChanged(list.indexOf(toDoItem))
+
+            //list.indexOf(toDoItem)
+            //這邊遇到 傳進來的 ToDoItem 雖然值都跟 List 中的一樣，但是 list.indexOf 無法辨別
+            var index = list.indexOf((list.find { it -> it.uniqueId == toDoItem.uniqueId }))
+            notifyItemChanged(index)
         }
     }
 
-    fun getAllItems(list: MutableList<ToDoItem>){
+    fun getAllItems(list: MutableList<ToDoItem>) {
         this.list = list
         notifyDataSetChanged()
     }
