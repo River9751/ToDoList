@@ -1,10 +1,14 @@
 package com.example.river.todolist
 
+import android.app.Activity
 import android.app.Application
+import android.content.Context
 import com.facebook.stetho.Stetho
 
 
-class MyApplication:Application() {
+class MyApplication : Application() {
+
+
     override fun onCreate() {
         // 啟動Stetho
         Stetho.initializeWithDefaults(this)
@@ -13,4 +17,6 @@ class MyApplication:Application() {
 
         super.onCreate()
     }
+
+
 }

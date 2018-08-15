@@ -63,8 +63,10 @@ class SQLiteDBManager(context: Context) : IDataHandler {
 
     override fun delete(uniqueId: String, cb: IDataHandler.Callback) {
         try {
+            var aa = TABLE_NAME
+            println("*** $TABLE_NAME, $DB_NAME ")
             db.delete(TABLE_NAME, "uniqueId = '$uniqueId'", null)
-            cb.onSuccess(null)
+            cb.onSuccess(uniqueId)
         } catch (ex: Exception) {
             cb.onError(ex.message!!)
         }

@@ -39,7 +39,7 @@ class ToDoItemPreferences : IDataHandler {
         try {
             editor.remove(uniqueId)
             editor.apply()
-            cb.onSuccess(null)
+            cb.onSuccess(uniqueId)
         } catch (ex: Exception) {
             cb.onError(ex.message!!)
         }
