@@ -1,12 +1,13 @@
-package com.example.river.todolist
+package com.example.river.todolist.helper
 
+import com.example.river.todolist.IDataHandler
+import com.example.river.todolist.ToDoItem
 import com.google.firebase.database.*
 import com.google.firebase.database.DatabaseReference
 import java.util.*
-import javax.security.auth.callback.Callback
 
 
-class FirebaseHelper() : IDataHandler {
+class FirebaseHelper : IDataHandler {
 
     private var fireDB = FirebaseDatabase.getInstance()
     private var myRef: DatabaseReference
@@ -110,10 +111,3 @@ class FirebaseHelper() : IDataHandler {
         }
     }
 }
-
-
-
-
-
-
-

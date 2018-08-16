@@ -1,8 +1,7 @@
 package com.example.river.todolist
 
-import android.app.Activity
 import android.app.Application
-import android.content.Context
+import com.example.river.todolist.helper.ToDoItemPreferences
 import com.facebook.stetho.Stetho
 
 

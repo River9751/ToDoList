@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 
-class SectionsPageAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+class PageAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 
     private var mFragmentList = arrayListOf<Fragment>()
     private var mFragmentTitleList = arrayListOf<String>()

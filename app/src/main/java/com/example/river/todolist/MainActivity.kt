@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mSectionsPageAdapter: SectionsPageAdapter
+    private lateinit var mSectionsPageAdapter: PageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 //        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
 
-        mSectionsPageAdapter = SectionsPageAdapter(fragmentManager)
+        mSectionsPageAdapter = PageAdapter(fragmentManager)
 
 
         setupViewPager(vp_01)

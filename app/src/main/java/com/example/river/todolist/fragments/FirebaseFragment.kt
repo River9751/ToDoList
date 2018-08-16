@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.example.river.todolist.*
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.river.todolist.helper.FirebaseHelper
 import kotlinx.android.synthetic.main.fragment_firebase.*
 import javax.security.auth.callback.Callback
 
@@ -66,10 +66,6 @@ class FirebaseFragment : Fragment() {
         rv_firebase.layoutManager = LinearLayoutManager(super.getActivity())
 
         super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
 

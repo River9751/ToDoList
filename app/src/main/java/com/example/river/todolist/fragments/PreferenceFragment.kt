@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.example.river.todolist.*
+import com.example.river.todolist.helper.ToDoItemPreferences
 import kotlinx.android.synthetic.main.fragment_preference.*
 import javax.security.auth.callback.Callback
 

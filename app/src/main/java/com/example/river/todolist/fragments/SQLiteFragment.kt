@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.example.river.todolist.*
+import com.example.river.todolist.helper.SQLiteHelper
 import kotlinx.android.synthetic.main.fragment_sqlite.*
 import javax.security.auth.callback.Callback
 
@@ -50,7 +51,7 @@ class SQLiteFragment : Fragment() {
                 ctx,
                 toDoItemList,
                 ::itemClicked) //把按下後的判斷方法當作參數傳入
-        dataHandler = SQLiteDBManager(ctx)
+        dataHandler = SQLiteHelper(ctx)
 
         dataHandler.load(object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {

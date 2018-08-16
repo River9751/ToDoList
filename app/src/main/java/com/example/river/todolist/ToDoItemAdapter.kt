@@ -25,7 +25,6 @@ class ToDoItemAdapter(
     private var list = toDoItemList
     private val itemClickListener = clickListener
 
-
     companion object {
         fun doStrike(checked: Boolean, textView: TextView) {
             if (checked) {
