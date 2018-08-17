@@ -10,21 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import com.example.river.todolist.IDataHandler
-import com.example.river.todolist.R
-import com.example.river.todolist.ToDoItem
-import com.example.river.todolist.ToDoItemAdapter
+import com.example.river.todolist.*
 import com.example.river.todolist.helper.FirebaseHelper
+import com.example.river.todolist.helper.FirestoreHelper
 import kotlinx.android.synthetic.main.fragment_firebase.*
+import kotlinx.android.synthetic.main.fragment_firestore.*
 import javax.security.auth.callback.Callback
 
-class FirebaseFragment : Fragment() {
+class FirestoreFragment : Fragment() {
 
     lateinit var ctx: Context
 
     lateinit var toDoAdapter: ToDoItemAdapter
 
-    var toDoItemList: MutableList<ToDoItem> = arrayListOf()
+    var toDoItemList: MutableList<ToDoItem> = arrayListOf<ToDoItem>()
 
     lateinit var dataHandler: IDataHandler
 
@@ -33,19 +32,18 @@ class FirebaseFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_firebase, container, false)
+        return inflater.inflate(R.layout.fragment_firestore, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        //ctx = this.activity!!
-        //ctx = this.context!!.applicationContext
+
         ctx = this.context!!
         /**
          * context 為所依附的 Activity
          */
         //println("*** ${this.context.toString()} ***")
 
-        fab_firebase.setOnClickListener {
+        fab_firestore.setOnClickListener {
             itemDialog(toDoItem = ToDoItem("", "", false))
         }
 
@@ -53,7 +51,7 @@ class FirebaseFragment : Fragment() {
                 ctx,
                 toDoItemList,
                 ::itemClicked) //把按下後的判斷方法當作參數傳入
-        dataHandler = FirebaseHelper()
+        dataHandler = FirestoreHelper()
 
         dataHandler.load(object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
@@ -65,8 +63,8 @@ class FirebaseFragment : Fragment() {
             }
         })
 
-        rv_firebase.adapter = toDoAdapter
-        rv_firebase.layoutManager = LinearLayoutManager(super.getActivity())
+        rv_firestore.adapter = toDoAdapter
+        rv_firestore.layoutManager = LinearLayoutManager(super.getActivity())
 
         super.onActivityCreated(savedInstanceState)
     }
@@ -121,7 +119,6 @@ class FirebaseFragment : Fragment() {
     private fun insertData(itemText: String) {
         dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
-                println("***AddNewItemToRecyclerView***")
                 toDoAdapter.addNewItem(obj as ToDoItem)
             }
 

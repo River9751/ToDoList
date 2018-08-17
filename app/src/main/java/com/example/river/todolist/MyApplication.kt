@@ -1,11 +1,12 @@
 package com.example.river.todolist
 
 import android.app.Application
+import android.support.multidex.MultiDexApplication
 import com.example.river.todolist.helper.ToDoItemPreferences
 import com.facebook.stetho.Stetho
 
 
-class MyApplication : Application() {
+class MyApplication : MultiDexApplication() {
 
 
     override fun onCreate() {
