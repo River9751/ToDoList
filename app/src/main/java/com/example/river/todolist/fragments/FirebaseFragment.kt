@@ -10,10 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import com.example.river.todolist.IDataHandler
-import com.example.river.todolist.R
-import com.example.river.todolist.ToDoItem
-import com.example.river.todolist.ToDoItemAdapter
+import com.example.river.todolist.*
 import com.example.river.todolist.helper.FirebaseHelper
 import kotlinx.android.synthetic.main.fragment_firebase.*
 import javax.security.auth.callback.Callback
@@ -27,7 +24,6 @@ class FirebaseFragment : Fragment() {
     var toDoItemList: MutableList<ToDoItem> = arrayListOf()
 
     lateinit var dataHandler: IDataHandler
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,10 +40,6 @@ class FirebaseFragment : Fragment() {
          * context 為所依附的 Activity
          */
         //println("*** ${this.context.toString()} ***")
-
-        fab_firebase.setOnClickListener {
-            itemDialog(toDoItem = ToDoItem("", "", false))
-        }
 
         toDoAdapter = ToDoItemAdapter(
                 ctx,
@@ -71,7 +63,6 @@ class FirebaseFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
-
     /**
      * 按下介面控制項的事件
      */
@@ -80,7 +71,10 @@ class FirebaseFragment : Fragment() {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> itemDialog(toDoItem)
+            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
+                toDoItem.itemText = itemText
+                updateData(toDoItem)
+            }.show()
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //
@@ -118,7 +112,7 @@ class FirebaseFragment : Fragment() {
                 .show()
     }
 
-    private fun insertData(itemText: String) {
+    internal fun insertData(itemText: String) {
         dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
                 println("***AddNewItemToRecyclerView***")
@@ -134,8 +128,6 @@ class FirebaseFragment : Fragment() {
     private fun updateData(toDoItem: ToDoItem) {
         dataHandler.update(toDoItem, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
-                var item = obj as ToDoItem
-
                 toDoAdapter.updateItem(obj as ToDoItem)
             }
 

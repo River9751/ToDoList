@@ -43,10 +43,6 @@ class FirestoreFragment : Fragment() {
          */
         //println("*** ${this.context.toString()} ***")
 
-        fab_firestore.setOnClickListener {
-            itemDialog(toDoItem = ToDoItem("", "", false))
-        }
-
         toDoAdapter = ToDoItemAdapter(
                 ctx,
                 toDoItemList,
@@ -78,7 +74,10 @@ class FirestoreFragment : Fragment() {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> itemDialog(toDoItem)
+            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
+                toDoItem.itemText = itemText
+                updateData(toDoItem)
+            }.show()
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //
@@ -116,7 +115,7 @@ class FirestoreFragment : Fragment() {
                 .show()
     }
 
-    private fun insertData(itemText: String) {
+    internal fun insertData(itemText: String) {
         dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
                 toDoAdapter.addNewItem(obj as ToDoItem)

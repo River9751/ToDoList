@@ -71,6 +71,5 @@ class ToDoItemPreferences : IDataHandler {
         } catch (ex: Exception) {
             cb.onError(ex.message!!)
         }
-
     }
 }

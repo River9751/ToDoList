@@ -1,6 +1,5 @@
 package com.example.river.todolist.fragments
 
-
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -36,21 +35,17 @@ class PreferenceFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         //ctx = this.activity!!
         //ctx = this.context!!.applicationContext
+
         ctx = this.context!!
-        /**
-         * context 為所依附的 Activity
-         */
-        println("*** ${this.context.toString()} ***")
 
-
-        fab_preference.setOnClickListener {
-            itemDialog(toDoItem = ToDoItem("", "", false))
-        }
+//        fab_preference.setOnClickListener {
+//            itemDialog(toDoItem = ToDoItem("", "", false))
+//        }
 
         toDoAdapter = ToDoItemAdapter(
                 ctx,
                 toDoItemList,
-                ::itemClicked) //把按下後的判斷方法當作參數傳入
+                ::itemClicked)
         dataHandler = ToDoItemPreferences(ctx)
 
         dataHandler.load(object : Callback, IDataHandler.Callback {
@@ -72,12 +67,15 @@ class PreferenceFragment : Fragment() {
     /**
      * 按下介面控制項的事件
      */
-    private fun itemClicked(id: Int, toDoItem: ToDoItem): Unit {
+    private fun itemClicked(id: Int, toDoItem: ToDoItem) {
         when (id) {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> itemDialog(toDoItem)
+            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
+                toDoItem.itemText = itemText
+                updateData(toDoItem)
+            }.show()
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //
@@ -115,7 +113,7 @@ class PreferenceFragment : Fragment() {
                 .show()
     }
 
-    private fun insertData(itemText: String) {
+    fun insertData(itemText: String) {
         dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
                 println("***AddNewItemToRecyclerView***")

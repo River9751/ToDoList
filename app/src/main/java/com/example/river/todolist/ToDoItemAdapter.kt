@@ -47,6 +47,7 @@ class ToDoItemAdapter(
     override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         //更改 Item 的屬性
         holder.cbDone.isChecked = list[position].done!!
         holder.tvText.text = list[position].itemText

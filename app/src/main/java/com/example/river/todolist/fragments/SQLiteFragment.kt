@@ -43,10 +43,6 @@ class SQLiteFragment : Fragment() {
         println("*** ${this.context.toString()} ***")
 
 
-        fab_sqlite.setOnClickListener {
-            itemDialog(toDoItem = ToDoItem("", "", false))
-        }
-
         toDoAdapter = ToDoItemAdapter(
                 ctx,
                 toDoItemList,
@@ -77,7 +73,17 @@ class SQLiteFragment : Fragment() {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> itemDialog(toDoItem)
+            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
+                toDoItem.itemText = itemText
+                updateData(toDoItem)
+            }.show()
+//            R.id.tv_item_text ->  ItemDialog().updateDialog(
+//                    toDoItem.itemText!!,
+//                    { itemText: String ->
+//                        toDoItem.itemText = itemText
+//                        updateData(toDoItem)
+//                    },
+//                    ctx) //itemDialog(toDoItem)
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //
@@ -115,7 +121,7 @@ class SQLiteFragment : Fragment() {
                 .show()
     }
 
-    private fun insertData(itemText: String) {
+    internal fun insertData(itemText: String) {
         dataHandler.insert(itemText, object : Callback, IDataHandler.Callback {
             override fun onSuccess(obj: Any?) {
                 println("***AddNewItemToRecyclerView***")
