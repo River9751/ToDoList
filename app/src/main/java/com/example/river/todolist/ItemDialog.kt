@@ -44,6 +44,8 @@ class ItemDialog : AlertDialog.Builder {
                 .setPositiveButton(positiveButtonText) { dialog, positiveButton ->
                     itemEditText.requestFocus()
 
+
+
                     val imm: InputMethodManager =
                             ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(

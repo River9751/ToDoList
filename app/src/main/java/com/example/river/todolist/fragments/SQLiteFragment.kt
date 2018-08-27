@@ -73,17 +73,10 @@ class SQLiteFragment : Fragment() {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
+            R.id.tv_item_text -> MyDialog(ctx).showUpdateDlg(toDoItem.itemText!!) { itemText: String ->
                 toDoItem.itemText = itemText
                 updateData(toDoItem)
-            }.show()
-//            R.id.tv_item_text ->  ItemDialog().updateDialog(
-//                    toDoItem.itemText!!,
-//                    { itemText: String ->
-//                        toDoItem.itemText = itemText
-//                        updateData(toDoItem)
-//                    },
-//                    ctx) //itemDialog(toDoItem)
+            }
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //

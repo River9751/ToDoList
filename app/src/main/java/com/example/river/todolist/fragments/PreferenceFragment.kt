@@ -31,7 +31,6 @@ class PreferenceFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_preference, container, false)
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         //ctx = this.activity!!
         //ctx = this.context!!.applicationContext
@@ -72,10 +71,11 @@ class PreferenceFragment : Fragment() {
             //刪除
             R.id.iv_cross -> deleteData(toDoItem.uniqueId!!)
             //修改
-            R.id.tv_item_text -> ItemDialog(ctx, toDoItem.itemText) { itemText: String ->
-                toDoItem.itemText = itemText
-                updateData(toDoItem)
-            }.show()
+            R.id.tv_item_text ->
+                MyDialog(ctx).showUpdateDlg(toDoItem.itemText!!) { itemText: String ->
+                    toDoItem.itemText = itemText
+                    updateData(toDoItem)
+                }
             //勾選
             R.id.cb_item_is_done -> updateData(toDoItem)
             //

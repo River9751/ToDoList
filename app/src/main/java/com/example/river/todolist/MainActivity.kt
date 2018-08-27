@@ -27,7 +27,9 @@ class MainActivity : AppCompatActivity() {
             when (fg) {
                 is PreferenceFragment -> {
                     //TODO 為什麼可以這樣寫
-                    ItemDialog(this, null) { itemText -> fg.insertData(itemText) }.show()
+//                    ItemDialog(this, null) { itemText -> fg.insertData(itemText) }.show()
+//                    MyDialog(this).showInsertDlg{ itemText -> fg.insertData(itemText) }
+                    MyDialog(this).showInsertDlg { itemText -> fg.insertData(itemText) }
                 }
                 is SQLiteFragment -> {
                     ItemDialog(this, null) { itemText -> fg.insertData(itemText) }.show()
